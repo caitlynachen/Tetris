@@ -1,0 +1,65 @@
+
+package jrJava.Tetris;
+
+import resources.SoundPlayer;
+
+public class SoundEffect {
+
+	private static SoundPlayer bgSound;
+	private static SoundPlayer bubblingSound;
+	private static SoundPlayer arrowSound;
+	private static SoundPlayer shiftSound;
+	private static SoundPlayer eerieSound;
+	private static SoundPlayer impactSound;
+
+	static {
+		bgSound = new SoundPlayer();
+		bubblingSound = new SoundPlayer();
+		arrowSound = new SoundPlayer();
+		shiftSound = new SoundPlayer();
+		eerieSound = new SoundPlayer();
+		impactSound = new SoundPlayer();
+
+		bgSound.load(Coordinator.RESOURCE_PATH + "imperialMarch.wav");
+		bubblingSound.load(Coordinator.RESOURCE_PATH + "bubbling.wav");
+		arrowSound.load(Coordinator.RESOURCE_PATH + "arrow.wav");
+		shiftSound.load(Coordinator.RESOURCE_PATH + "shift.wav");
+		eerieSound.load(Coordinator.RESOURCE_PATH + "eerie.wav");
+		impactSound.load(Coordinator.RESOURCE_PATH +"kChing.wav");
+	} 
+
+	public static void startBgSound(){
+		bgSound.playLoop();
+
+	}
+	public static void stopBgSound() {
+		bgSound.stop();
+		
+	}
+	public static void moveDown(){
+		bubblingSound.play();
+	}
+	public static void moveLeft(){
+		shiftSound.play();
+	}
+	public static void moveRight(){
+		shiftSound.play();
+	}
+	public static void rotate(){
+		arrowSound.play();
+	}
+	public static void mirror(){
+		arrowSound.play();
+	}
+	public static void hardDrop(){
+		impactSound.play();
+	}
+	public static void deleteRow(){
+		eerieSound.play();
+	}
+
+		
+	
+
+
+}
