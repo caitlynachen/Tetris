@@ -1,0 +1,128 @@
+package jrJava.Tetris;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+
+import resources.DrawingBoard;
+
+public class Graveyard {
+
+	private static TombStack[] stacks;
+	
+	private static ArrayList<Integer> fullRowYValues = new ArrayList<Integer>();
+	
+	static {
+		stacks = new TombStack[(Wall.RIGHT-Wall.LEFT)/Block.SIZE];
+		for(int i=0; i<stacks.length; i++){
+			stacks[i] = new TombStack();
+		}
+	}
+	
+	
+	public static void draw(DrawingBoard board){
+		for(int i=0; i<stacks.length; i++){
+			stacks[i].draw(board);
+		}
+		
+		if(fullRowYValues.size()>0) markClearingBlocks(board);
+	}
+	
+	private static void markClearingBlocks(DrawingBoard board){
+		Graphics2D canvas= board.getCanvas();
+		canvas.setColor(Color.black);
+		
+		for(int i=0; i<fullRowYValues.size(); i++){
+			Integer each = fullRowYValues.get(i);
+			int y = each.intValue();
+			
+			for(int j=0; j<stacks.length;j++){
+				canvas.drawLine(Wall.LEFT +j*Block.SIZE,y,Wall.LEFT +j*Block.SIZE+Block.SIZE,y+Block.SIZE);
+			}
+		}
+	}
+	
+	public static void bury(Block tetrisBlock){
+		int stackIndex = (tetrisBlock.getX()-Wall.LEFT)/Block.SIZE;
+		stacks[stackIndex].add(tetrisBlock);
+	}
+	
+	
+	public static boolean isInside(Block block){
+		for(int i=0; i<stacks.length; i++){
+			if( stacks[i].checkOverlapping(block) ){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	
+	public static void clearFullRowsIfAny(){
+		
+		 int shortestTopY = Wall.TOP;
+		 int tallestTopY = Wall.BOTTOM;
+		 
+		 for(int i=0; i<stacks.length; i++){
+			 int each = stacks[i].getTopBlockY();
+			 if(each>shortestTopY) shortestTopY = each;
+			 if(each<tallestTopY)  tallestTopY = each;
+		 }
+		
+		 if(tallestTopY < Wall.TOP + 4*Block.SIZE) Coordinator.GAME_OVER = true;
+		 
+		 
+		 // Identify all the full rows.
+		 for(int y=shortestTopY; y<Wall.BOTTOM; y=y+Block.SIZE){
+			 boolean fullRow = true;
+			 for(int i=0; i<stacks.length; i++){
+				 if(!stacks[i].contains(y)){
+					 fullRow = false;
+					 break;
+				 }
+			 }
+			 if(fullRow) fullRowYValues.add( new Integer(y) );
+		 }
+		
+		 // clear the full rows.
+		 if(fullRowYValues.size()==0) return;
+		 
+		 
+		 Coordinator.timer.pause(500);
+		 Coordinator.draw();
+		 SoundEffect.deleteRow();
+		 Coordinator.timer.pause(500);
+		 
+		 for(int i=0; i<fullRowYValues.size(); i++){
+			 
+			 Integer each = fullRowYValues.get(i);
+			 int eachY = each.intValue();
+			 
+			 for(int j=0; j<stacks.length; j++){
+				 stacks[j].remove(eachY);
+				 stacks[j].shiftAnyAbove(eachY);
+			 }
+		 }
+		 
+		 fullRowYValues.clear();
+	}
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
