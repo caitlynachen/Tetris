@@ -1,0 +1,82 @@
+package jrJava.Tetris;
+
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+
+import resources.DrawingBoard;
+
+
+public class TombStack {
+
+	private ArrayList<Block> blocks = new ArrayList<Block>();
+	
+	public TombStack(){ }
+	
+	
+	public void add(Block block){
+		blocks.add(block);
+	}
+	
+	
+	public void draw(DrawingBoard board){
+		Graphics2D canvas = board.getCanvas();
+		for(int i=0; i<blocks.size(); i++){
+			Block each = blocks.get(i);
+			each.draw(board);
+		}
+	}
+	
+	
+	public boolean checkOverlapping(Block block){
+		for(int i=0; i<blocks.size(); i++){
+			Block each = blocks.get(i);
+			if( block.getX()==each.getX() && block.getY()==each.getY() ){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	
+	public int getTopBlockY(){
+		int min = Wall.BOTTOM;
+		for(int i=0; i<blocks.size(); i++){
+			int y = blocks.get(i).getY();
+			if(y<min) min = y;
+		}
+		return min;
+	}
+	
+	
+	public boolean contains(int y){
+		for(int i=0; i<blocks.size(); i++){
+			if(blocks.get(i).getY()==y) return true;
+		}
+		return false;
+	}
+	
+	
+	public void remove(int y){
+		for(int i=0; i<blocks.size(); i++){
+			if(blocks.get(i).getY()==y) {
+				blocks.remove(i);
+				break;
+			}
+		}
+	}
+	
+	
+	public void shiftAnyAbove(int y){
+		for(int i=0; i<blocks.size(); i++){
+			Block each = blocks.get(i);
+			if(each.getY() < y){
+				each.moveDown();
+			}
+		}
+	}
+	
+	
+}
