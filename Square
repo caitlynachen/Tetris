@@ -1,0 +1,11 @@
+package jrJava.Tetris;
+
+public class Square extends TetrisObject {
+	
+		public void createTetrisObject(){
+			blocks.add(new Block(-1, 0, color));
+			blocks.add(new Block(0,0, color));
+			blocks.add(new Block(0,1, color));
+			blocks.add(new Block(-1,1, color));
+	}
+}
