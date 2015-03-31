@@ -1,0 +1,41 @@
+package jrJava.Tetris;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+
+import resources.*;
+
+public class Wall {
+
+	public  static final int LEFT = 100;
+	public  static final int RIGHT = 500;
+	public  static final int TOP = 40;
+	public static final int BOTTOM = 600;
+
+	public static void draw(DrawingBoard board){
+		Graphics2D canvas = board.getCanvas();
+		canvas.setColor(Color.lightGray);
+
+		for(int x=LEFT; x<=RIGHT; x = x+Block.SIZE){
+			canvas.drawLine(x, TOP, x, BOTTOM);
+		}
+
+		for(int y=TOP; y<=BOTTOM; y = y+Block.SIZE){
+			canvas.drawLine(LEFT, y, RIGHT, y);
+		}
+
+		canvas.setColor(Color.DARK_GRAY);
+		canvas.drawRect(LEFT,TOP, RIGHT-LEFT, BOTTOM-TOP);
+	}
+
+	public static boolean isOutside(Block block){
+		if(block.getX()<LEFT || 
+				block.getX() >=RIGHT ||
+				block.getY() >=BOTTOM){
+			return true;
+		}
+
+		return false;
+	}
+}
+
