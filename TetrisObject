@@ -1,0 +1,226 @@
+package jrJava.Tetris;
+
+import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import resources.DrawingBoard;
+
+public abstract class TetrisObject implements KeyListener {
+
+	public static Color[] colorMenu = new Color[]{ 	Color.red,
+													Color.blue,
+													Color.green,
+													Color.yellow,
+													Color.cyan,
+													Color.magenta,
+													Color.pink
+	};
+	
+	
+	protected ArrayList<Block> blocks = new ArrayList<Block>();
+	
+	protected int xCenter;
+	protected int yCenter;
+	protected Color color;
+	
+	
+	public TetrisObject(){
+		xCenter = 240;
+		yCenter = 60;
+		int rand = (int) (Math.random()*colorMenu.length);
+		color = colorMenu[rand];
+		createTetrisObject();
+	}
+	
+	
+	public abstract void createTetrisObject();
+	
+	
+	private boolean illegalMove(){
+		for(int i=0; i<blocks.size(); i++){
+			Block each = blocks.get(i);
+			if( Wall.isOutside(each) || Graveyard.isInside(each) ){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	
+
+	public void moveDown(){
+		yCenter = yCenter + Block.SIZE;
+		updateBlocks();
+		
+		if( illegalMove() ){
+			yCenter = yCenter - Block.SIZE;
+			updateBlocks();
+			
+			Coordinator.killTetrisObject();
+			buryToGraveyard();
+		}
+		
+		SoundEffect.moveDown();
+	}
+	
+	
+	public void hardDrop(){
+		while(true){
+			yCenter = yCenter + Block.SIZE;
+			updateBlocks();
+			
+			if( illegalMove() ){
+				yCenter = yCenter - Block.SIZE;
+				updateBlocks();
+				break;
+			}
+		}
+		
+		SoundEffect.hardDrop();
+	}
+	
+	
+	public void moveLeft(){
+		xCenter = xCenter - Block.SIZE;
+		updateBlocks();
+		
+		if( illegalMove() ){
+			xCenter = xCenter + Block.SIZE;
+			updateBlocks();
+		}
+		
+		SoundEffect.moveLeft();
+	}
+
+	
+	public void moveRight(){
+		xCenter = xCenter + Block.SIZE;
+		updateBlocks();
+		
+		if( illegalMove() ){
+			xCenter = xCenter - Block.SIZE;
+			updateBlocks();
+		}
+		
+		SoundEffect.moveRight();
+	}
+	
+	
+	public void mirror(){
+		for(int i=0; i<blocks.size(); i++){
+			Block each = blocks.get(i);
+			each.mirror();
+		}
+		updateBlocks();
+		
+		if( illegalMove() ){
+			for(int i=0; i<blocks.size(); i++){
+				Block each = blocks.get(i);
+				each.mirror();
+			}
+			updateBlocks();
+		}
+		
+		SoundEffect.mirror();
+	}
+	
+	
+	public void rotate(){
+		for(int i=0; i<blocks.size(); i++){
+			Block each = blocks.get(i);
+			each.rotateClockwise();
+		}
+		updateBlocks();
+		
+		if( illegalMove() ){
+			for(int i=0; i<blocks.size(); i++){
+				Block each = blocks.get(i);
+				each.rotateCounterClockwise();
+			}
+			updateBlocks();
+		}
+		
+		SoundEffect.rotate();
+	}
+	
+	
+	public void updateBlocks(){
+		for(int i=0; i<blocks.size(); i++){
+			Block each = blocks.get(i);
+			each.updateXY(xCenter, yCenter);
+		}
+	}
+	
+	
+	
+	public void draw(DrawingBoard board){
+		for(int i=0; i<blocks.size(); i++){
+			Block each = blocks.get(i);
+			each.draw(board);
+		}
+	}
+
+
+	public void buryToGraveyard(){
+		for(int i=0; i<blocks.size(); i++){
+			Block each = blocks.get(i);
+			Graveyard.bury(each);
+		}
+		
+		Graveyard.clearFullRowsIfAny();
+	}
+	
+	
+	public void keyTyped(KeyEvent e) { }
+
+
+	public void keyPressed(KeyEvent e) {
+		
+		int keyCode = e.getKeyCode();
+		
+		if(keyCode==KeyEvent.VK_LEFT){
+			moveLeft();
+			Coordinator.draw();
+		}
+		else if(keyCode==KeyEvent.VK_RIGHT){
+			moveRight();
+			Coordinator.draw();
+		}
+		else if(keyCode==KeyEvent.VK_DOWN){
+			hardDrop();
+			Coordinator.draw();
+		}
+		else if(keyCode==KeyEvent.VK_E){
+			mirror();
+			Coordinator.draw();
+		}
+		else if(keyCode==KeyEvent.VK_R){
+			rotate();
+			Coordinator.draw();
+		}
+		else if(keyCode==KeyEvent.VK_B){
+			Coordinator.killTetrisObject();
+			buryToGraveyard();
+		}
+		
+	}
+
+
+	public void keyReleased(KeyEvent e) { }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
