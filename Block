@@ -1,0 +1,73 @@
+package jrJava.Tetris;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+
+import resources.DrawingBoard;
+
+public class Block {
+
+	public static final int SIZE =20;
+	private int xDisplacement;
+	private int yDisplacement;
+
+	private int x;
+	private int y;
+
+	private Color color;
+
+	public Block(int _xDisplacement, int _yDisplacement, Color _color){
+		xDisplacement = _xDisplacement;
+		yDisplacement = _yDisplacement;
+		color = _color;
+
+	}
+
+	public void updateXY(int xCenter, int yCenter){
+		x = xCenter + xDisplacement*SIZE;
+		y = yCenter + yDisplacement*SIZE;
+
+	}
+
+	public int getX(){
+		return x;
+	}
+
+	public int getY(){
+		return y;
+	}
+
+	public Color getColor(){
+		return color;
+	}
+
+	public void moveDown(){
+		y=y+SIZE;
+		
+	}
+	public void mirror(){
+		xDisplacement = -xDisplacement;
+	}
+
+	public void rotateClockwise(){
+		int temp = xDisplacement;
+		xDisplacement= -yDisplacement;
+		yDisplacement = temp;
+	}
+
+	public void rotateCounterClockwise(){
+		int temp=xDisplacement;
+		xDisplacement= yDisplacement;
+		yDisplacement = -temp;
+	}
+
+	public void draw(DrawingBoard Board){
+		Graphics2D canvas = Board.getCanvas();
+		canvas.setColor(color);
+		canvas.fillRect(x, y, SIZE, SIZE);
+		canvas.setColor(Color.black);
+		canvas.drawRect(x, y, SIZE, SIZE);
+
+
+
+	}}
